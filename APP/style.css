@@ -14,7 +14,7 @@ h1 {
   font-size: 1.75rem;
   text-align: center;
   padding: 18px 0;
-  color: #fff;
+  color: #000000;
 }
 .container {
   display: flex;
@@ -65,7 +65,7 @@ h1 {
   width: 100%;
 }
 .weather-data .current-weather {
-  color: #fff;
+  color: #000;
   background: #5372F0;
   border-radius: 5px;
   padding: 20px 70px 20px 20px;
@@ -101,11 +101,11 @@ h1 {
   gap: 20px;
 }
 .weather-cards .card {
-  color: #fff;
+  color: #000;
   padding: 18px 16px;
   list-style: none;
   width: calc(100% / 5);
-  background: #6C757D;
+  background: #afb9c1;
   border-radius: 5px;
 }
 .weather-cards .card h3 {
