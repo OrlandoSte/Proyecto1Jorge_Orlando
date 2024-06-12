@@ -25,21 +25,29 @@ public class conexion {
 		File f = new File("Pagina.html");
 		FileWriter writer = new FileWriter(f);
 		
+		//Aqui se monta el url completo del que sacaremos la informacion
 		String api_key="e802f5714c9e4729848142736242504";
 		String ciudad = "Alcaniz";
 		String dias = "7";
 		String url = "https://api.weatherapi.com/v1/forecast.xml?key="+ api_key +"&q=" + ciudad + "&days="+ dias +"&aqi=no&alerts=no\\r\\n";
 		URL obj = new URL(url);
+		
+		// Aqui se crea un objeto conexion pasandole la conexion que hemos creado antes
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		
+		//Aqui he sacado la fecha de hoy que luego le paso a la caja principal
 		LocalDateTime hoy = LocalDateTime.now(); 
          
          int dia =hoy.getDayOfMonth();
          String mes = ""+hoy.getMonthValue();
          String anyo = ""+hoy.getYear();
 		
+		//Aqui saco el numero que me da la conexion para comprobar que esta bien
+		// ya que si sale 400 es que no esta bien y 200 si esta todo correcto
 		int responseCode = con.getResponseCode();
 		System.out.println("Response COde : "+ responseCode);
+
+		//Aqui se coge la informacion de la conexion HTTPS y se guarda en un StringBufer
 		BufferedReader in = new BufferedReader(
 				new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -51,6 +59,9 @@ public class conexion {
 		
 		//System.out.println(response.toString());
 		
+
+		//Aqui lo que se hace es que le pasas el StringBufer de antes al DocumentBuilder que es una libreria que se encarga de montar las 
+		// inforamcion para poder exaertla y utilizarla
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 				.parse(new InputSource(new StringReader(response.toString())));
 		
@@ -60,15 +71,17 @@ public class conexion {
 		Element err = (Element) localizacion.item(0);
 		ciudadT = err.getElementsByTagName("name").item(0).getTextContent();
 		
-		/* Aqui sacamos la temperatura actual que hay, los km/h del viento y la humedad del nodo "current"*/
+		// Aqui se selecciona el nodo que se llama "current"
 		NodeList actual = doc.getElementsByTagName("current");
-	
+
+		/* Aqui sacamos la temperatura actual que hay, los km/h del viento y la humedad del nodo "current"*/
 		err = (Element) actual.item(0);		
 		String tempAct = err.getElementsByTagName("temp_c").item(0).getTextContent();
 		String viento = err.getElementsByTagName("wind_kph").item(0).getTextContent();
 		String humedadD = err.getElementsByTagName("humidity").item(0).getTextContent();
 		
-         String cabeceraHtml = """
+		// Esto es solo un string en el que le escribo el html que luego escribire
+        String cabeceraHtml = """
                  <html>
                   <head>
 				    <meta charset="utf-8">
@@ -80,6 +93,8 @@ public class conexion {
 				    <div class="container">
 					    <div class="weather-input">        
              """ ;
+
+		// Esto es otro string del cuerpo del HTML
          String cuerpoHtml = "";
         
          cuerpoHtml += "<button class=\"search-btn\" onclick=\"cambiarTema()\">Cambiar Tema</button>\n";
@@ -97,6 +112,7 @@ public class conexion {
          cuerpoHtml += "<h2 class=\"textos\">Pronostico de 7 dias</h2>\n";
          cuerpoHtml += "<ul class=\"weather-cards\">\n";
          
+		// Esto es otro string del foteer del HTML
          String piesHtml = """
          		    		    	</ul>
          		    			</div>
@@ -107,7 +123,8 @@ public class conexion {
 				<script src="script.js"></script>
                  """;
          		
-        
+        // Aqui selecciono el nodo que se llama day y despues saco con "fore.getLength()" cuantos elementos tiene
+		// y a continuacion lo meto en un if para comprobar que tiene elementos y despues voy recorriendo el XML con un for
 		NodeList fore = doc.getElementsByTagName("day");
 		int numDia = fore.getLength();
 		if(numDia > 0) {
@@ -132,9 +149,11 @@ public class conexion {
 				dia += 1;
 			}
 			
-	
+
+		//Aqui se monta el HTML completo y despues lo escribo 
 		String htmlCompleto = cabeceraHtml + cuerpoHtml + piesHtml;
 		
+
 		writer.write(htmlCompleto);
 		writer.close();
 		
